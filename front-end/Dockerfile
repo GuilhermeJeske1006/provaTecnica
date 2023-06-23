@@ -1,5 +1,17 @@
-# Use a imagem base do Node.js
-FROM node:16-alpine
+FROM node:lts-alpine
 
-# Instale globalmente o pacote @vue/cli
-RUN npm install -g @vue/cli
+RUN npm install -g http-server && npm install -g @vue/cli
+
+WORKDIR /app
+
+COPY package*.json ./
+
+# instala dependências do projeto
+RUN npm install
+
+COPY . .
+
+RUN npm run build 
+
+EXPOSE 8080
+CMD [ "http-server", "dist" ]
