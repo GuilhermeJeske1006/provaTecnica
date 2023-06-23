@@ -11,9 +11,16 @@ git clone https://github.com/GuilhermeJeske1006/provaTecnica.git
 
 #### Requisitos necessários
 
-- PHP instalado
-- Servidor Apache
-- Composer
+- **Sem Docker**
+  - PHP instalado
+  - Servidor Apache
+  - Composer
+
+- **Com Docker**
+  - Docker instalado
+  - Distribuição Linux em execução
+
+#### Configuração sem Docker
 
 1. Navegue até o diretório `provatecnica/api`:
    ```
@@ -41,9 +48,64 @@ git clone https://github.com/GuilhermeJeske1006/provaTecnica.git
    php artisan serve --port=80
    ```
 
-### Configurando o Frontend
+#### Configuração com Docker
 
-#### Sem Docker
+1. Navegue até o diretório raiz do projeto:
+   ```
+   cd provaTecnica
+   ```
+
+2. Execute o seguinte comando para instalar as dependências do pacote usando o Docker:
+   ```bash
+   docker run --rm \
+       -u "$(id -u):$(id -g)" \
+       -v "$(pwd)/api:/var/www/html" \
+       -w /var/www/html \
+       laravelsail/php82-composer:latest \
+       composer install --ignore-platform-reqs
+   ```
+
+3. Inicie o container Docker:
+   ```bash
+   ./vendor/bin/sail up
+   ```
+
+#### Configuração do Arquivo .env
+
+Copie o conteúdo do arquivo `.env` fornecido abaixo e substitua as variáveis relevantes, se necessário:
+
+```plaintext
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:v3hqIaFthqNSUUFStz2wGmcUGQszR6bij/PqsaBnhpU=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+...
+
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=example_app
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+...
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+...
+
+```
+
+#### Configurando o Frontend
 
 ##### Requisitos necessários
 
@@ -65,18 +127,27 @@ git clone https://github.com/GuilhermeJeske1006/provaTecnica.git
 
 3. Execute o projeto em modo de desenvolvimento:
    ```
-   npm run dev
-   ```
-
-#### Com Docker
-
-1. Execute o seguinte comando para iniciar o servidor de desenvolvimento do frontend:
-   ```
    npm run serve
    ```
-   ou
+
+##### Com Docker
+
+1. Navegue até o diretório raiz do projeto:
    ```
-   npm run dev
+   cd provaTecnica
    ```
 
-Isso iniciará a API backend e o frontend, permitindo que você acesse o projeto através do navegador. Certifique-se de ter os requisitos necessários instalados antes de prosseguir com as etapas de configuração.
+2. Execute o seguinte comando para fazer o build do container docker:
+   ```
+   docker build -t frontend .
+   ```
+3. Execute o seguinte comando para rodar o docker:
+
+   ```
+   docker run -it -p 8080:8080 --rm --name vuejs-app-1 frontend
+   ```
+
+Agora você poderá acessar o projeto no seguinte link
+ ```
+http://localhost:8080/
+ ```
